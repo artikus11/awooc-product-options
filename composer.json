@@ -1,0 +1,15 @@
+{
+    "name": "art/awooc-product-options",
+    "description": "Дополнение к плагину Art WooCommerce Order One Click. Поддержка плагинов Advanced Product Fields for WooCommerce, Simple Product Options for WooCommerce, Extra product options For WooCommerce",
+    "autoload": {
+        "psr-4": {
+            "Art\\AwoocProductOptions\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Andreslav Kozlov, Artem Abramovich"
+        }
+    ],
+    "require": {}
+}
