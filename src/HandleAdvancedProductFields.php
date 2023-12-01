@@ -18,7 +18,7 @@ class HandleAdvancedProductFields extends Handle {
 			return $options_names;
 		}
 
-		return $this->get_options_names( $options['wapf'], $options_names );
+		return $this->get_options_names( $options['wapf'], $options_names, get_class( $this ) );
 	}
 
 }

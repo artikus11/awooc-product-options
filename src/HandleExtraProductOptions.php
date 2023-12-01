@@ -18,8 +18,7 @@ class HandleExtraProductOptions extends Handle {
 			return $options_names;
 		}
 
-
-		return $this->get_options_names( $options['thwepof_options'], $options_names );
+		return $this->get_options_names( $options['thwepof_options'], $options_names, get_class( $this ) );
 
 	}
 
