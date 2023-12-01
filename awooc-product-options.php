@@ -4,11 +4,11 @@
  * Plugin URI: https://gist.github.com/Andreslav/7f5ebabf0729161f338e83e98d22def0#file-support-product-options-for-awooc-php-L49
  * Text Domain: awooc-product-options
  * Domain Path: /languages
- * Description: Дополнение к плагину Art WooCommerce Order One Click. Поддержка плагинов дополнительных полей для товаров Advanced Product Fields for WooCommerce, Simple Product Options for WooCommerce, Extra product options For WooCommerce и других.
+ * Description: Дополнение к плагину Art WooCommerce Order One Click (3.0.0). Поддержка плагинов дополнительных опций товаров Advanced Product Fields for WooCommerce (1.6.4), Simple Product Options for WooCommerce (1.0.0) и Extra product options For WooCommerce (3.2.4). Важно: опции передаются в заказ, но их стоимость не учитывается.
  *
  * Author: Andreslav Kozlov, Artem Abramovich
  * Author URI: https://gist.github.com/Andreslav
- * Version: 1.0.0
+ * Version: 1.0.1
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  *
@@ -28,8 +28,6 @@ $plugin_data = get_file_data(
 );
 
 const AWOOC_PO_PLUGIN_DIR = __DIR__;
-define( 'AWOOC_PO_PLUGIN_URI', plugin_dir_url( __FILE__ ) );
-define( 'AWOOC_PO_PLUGIN_FILE', plugin_basename( __FILE__ ) );
 
 define( 'AWOOC_PO_PLUGIN_VER', $plugin_data['ver'] );
 define( 'AWOOC_PO_PLUGIN_NAME', $plugin_data['name'] );
