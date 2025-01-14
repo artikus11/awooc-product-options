@@ -7,10 +7,22 @@ class Handle {
 	public function setup_hooks() {
 
 		add_filter( 'awooc_data_ajax_options', [ $this, 'added_options' ], 10, 3 );
+		add_action( 'awooc_create_order', [ $this, 'add_option_in_order' ], 100, 3 );
+
+		add_action( 'wp_footer', [ $this, 'added_option_in_post_data' ], 100 );
 	}
 
 
-	public function added_options( $options_names, $product_parent_id, $product_id ) { }
+	public function added_option_in_post_data(): void {}
+
+
+	public function added_options( $options, $data, $product_id) {
+
+		return $options;
+	}
+
+
+	public function add_option_in_order( $order, $contact_form, $posted_data ): void {}
 
 
 	/**
