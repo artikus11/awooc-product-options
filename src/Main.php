@@ -8,6 +8,7 @@ use Art\AwoocProductOptions\Formatters\Popup;
 use Art\AwoocProductOptions\Handles\AdvancedProductFields;
 use Art\AwoocProductOptions\Handles\ArtWoocommerceProductOptions;
 use Art\AwoocProductOptions\Handles\ExtraProductOptions;
+use Art\AwoocProductOptions\Handles\SimpleProductOptions;
 
 class Main {
 
@@ -34,6 +35,10 @@ class Main {
 	 * @return void
 	 */
 	protected function init_classes(): void {
+
+		if ( PluginsManager::is_plugin_active( 'product-options-for-woocommerce/product-options-for-woocommerce.php' ) ) {
+			( new SimpleProductOptions() )->setup_hooks();
+		}
 
 		if ( PluginsManager::is_plugin_active( 'woo-extra-product-options/woo-extra-product-options.php' ) ) {
 			( new ExtraProductOptions() )->setup_hooks();
