@@ -109,10 +109,11 @@ class ExtraProductOptions extends Handle {
 			return $value;
 		}
 
-		$value = ! empty( $_POST[ $name ] ) ? sanitize_text_field( wp_unslash( $_POST[ $name ] ) ) : false;
-		$value = empty( $value ) && isset( $_REQUEST[ $name ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $name ] ) ) : $value;
+		$value = isset( $_POST[ $name ] ) ? map_deep( wp_unslash( $_POST[ $name ] ), 'sanitize_text_field' ) : '';
+		$value = empty( $value ) && isset( $_REQUEST[ $name ] ) ? map_deep( wp_unslash( $_REQUEST[ $name ] ), 'sanitize_text_field' ) : $value;
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
 		if ( 'textarea' === $type ) {
 			$value = sanitize_textarea_field( wp_unslash( $value ) );
 		} else {
