@@ -7,6 +7,7 @@ use Art\AwoocProductOptions\Formatters\Mail;
 use Art\AwoocProductOptions\Formatters\Popup;
 use Art\AwoocProductOptions\Handles\AdvancedProductFields;
 use Art\AwoocProductOptions\Handles\ArtWoocommerceProductOptions;
+use Art\AwoocProductOptions\Handles\ExtraProductOptions;
 
 class Main {
 
@@ -33,6 +34,10 @@ class Main {
 	 * @return void
 	 */
 	protected function init_classes(): void {
+
+		if ( PluginsManager::is_plugin_active( 'woo-extra-product-options/woo-extra-product-options.php' ) ) {
+			( new ExtraProductOptions() )->setup_hooks();
+		}
 
 		if ( PluginsManager::is_plugin_active( 'advanced-product-fields-for-woocommerce/advanced-product-fields-for-woocommerce.php' ) ) {
 			( new AdvancedProductFields() )->setup_hooks();
@@ -112,8 +117,11 @@ class Main {
 
 		$popup_formatter            = new Popup();
 		$data['toPopup']['options'] = $popup_formatter->format_options_with_label( $popup_formatter->get_options_names( $options_data['options'] ) );
-		$data['toPopup']['price']   = $popup_formatter->format_price_with_label( $options_data['amount'] );
-		$data['toPopup']['sum']     = $popup_formatter->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
+
+		if ( ! empty( $options_data['amount'] ) ) {
+			$data['toPopup']['price'] = $popup_formatter->format_price_with_label( $options_data['amount'] );
+			$data['toPopup']['sum']   = $popup_formatter->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
+		};
 
 		return $data;
 	}
@@ -129,8 +137,11 @@ class Main {
 
 		$mail_formatter            = new Mail();
 		$data['toMail']['options'] = $mail_formatter->format_options_with_label( $mail_formatter->get_options_names( $options_data['options'] ) );
-		$data['toMail']['price']   = $mail_formatter->format_price_with_label( $options_data['amount'] );
-		$data['toMail']['sum']     = $mail_formatter->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
+
+		if ( ! empty( $options_data['amount'] ) ) {
+			$data['toMail']['price'] = $mail_formatter->format_price_with_label( $options_data['amount'] );
+			$data['toMail']['sum']   = $mail_formatter->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
+		}
 
 		return $data;
 	}
@@ -146,7 +157,10 @@ class Main {
 
 		$analytics_formatter            = new Analytics();
 		$data['toAnalytics']['options'] = $analytics_formatter->format_options_list( $analytics_formatter->get_options_names( $options_data['options'] ) );
-		$data['toAnalytics']['price']   = $options_data['amount'];
+
+		if ( ! empty( $options_data['amount'] ) ) {
+			$data['toAnalytics']['price'] = $options_data['amount'];
+		}
 
 		return $data;
 	}
