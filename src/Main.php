@@ -25,6 +25,15 @@ class Main {
 		//( new HandleExtraProductOptions() )->setup_hooks();
 		//( new HandleSimpleProductOptions() )->setup_hooks();
 
+		$this->init_classes();
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function init_classes(): void {
+
 		if ( PluginsManager::is_plugin_active( 'advanced-product-fields-for-woocommerce/advanced-product-fields-for-woocommerce.php' ) ) {
 			( new AdvancedProductFields() )->setup_hooks();
 		}
@@ -40,19 +49,7 @@ class Main {
 		add_filter( 'awooc_select_elements_item', [ $this, 'add_select_elements' ] );
 		add_action( 'awooc_popup_column_left', [ $this, 'add_popup_element' ], 35, 2 );
 
-		add_filter( 'awooc_added_hidden_fields', [ $this, 'added_hidden_fields' ], 10, 1 );
-
 		add_filter( 'awooc_data_ajax', [ $this, 'add_data_ajax' ], 10, 2 );
-	}
-
-
-	public function added_hidden_fields( $addon_fields ) {
-
-
-		$addon_fields['awooc_options']       = '';
-		$addon_fields['awooc_options_price'] = '';
-
-		return $addon_fields;
 	}
 
 
@@ -74,17 +71,6 @@ class Main {
 		$data = $this->set_data_analytics( $options_data, $data );
 
 		$data['toOrder']['options'] = $options_data['options'];
-
-		$data['toPopup']['options'] = $this->get_option_for_popup( $this->get_options_names( $options_data['options'] ) );
-		$data['toPopup']['price']   = $this->get_formatted_price_for_popup( $options_data['amount'] );
-		$data['toPopup']['sum']     = $this->get_formatted_sum_for_popup( $options_data['amount'], $options_data['quantity'] );
-
-		$data['toMail']['options'] = $this->get_option_for_mail( $this->get_options_names( $options_data['options'] ) );
-		$data['toMail']['price']   = $this->get_formatted_price_for_mail( $options_data['amount'] );
-		$data['toMail']['sum']     = $this->get_formatted_sum_for_mail( $options_data['amount'], $options_data['quantity'] );
-
-		$data['toAnalytics']['options'] = implode( '; ', $this->get_options_names( $options_data['options'] ) );
-		$data['toAnalytics']['price']   = $options_data['amount'];
 
 		return $data;
 	}
@@ -163,20 +149,6 @@ class Main {
 		$data['toAnalytics']['price']   = $options_data['amount'];
 
 		return $data;
-	}
-
-
-	/**
-	 * @param  mixed $options_names
-	 *
-	 * @return string
-	 */
-	protected function get_option_for_mail( mixed $options_names ): string {
-
-		return sprintf(
-			__( 'Options: %s', 'awooc-product-options' ),
-			implode( '; ', $options_names )
-		);
 	}
 
 }
