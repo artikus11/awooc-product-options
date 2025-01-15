@@ -2,7 +2,10 @@
 
 namespace Art\AwoocProductOptions;
 
-use Art\AWOOC\Prepare\Popup;
+use Art\AwoocProductOptions\Formatters\Analytics;
+use Art\AwoocProductOptions\Formatters\Mail;
+use Art\AwoocProductOptions\Formatters\Popup;
+use Art\AwoocProductOptions\Handles\AdvancedProductFields;
 use Art\AwoocProductOptions\Handles\ArtWoocommerceProductOptions;
 
 class Main {
@@ -64,7 +67,11 @@ class Main {
 			return $data;
 		}
 
-		error_log( print_r( $options_data, true ) );
+		$data = $this->set_data_popup( $options_data, $data );
+
+		$data = $this->set_data_mail( $options_data, $data );
+
+		$data = $this->set_data_analytics( $options_data, $data );
 
 		$data['toOrder']['options'] = $options_data['options'];
 
@@ -109,75 +116,53 @@ class Main {
 	}
 
 
-	protected function get_options_names( $custom_options ): array {
+	/**
+	 * @param  mixed $options_data
+	 * @param        $data
+	 *
+	 * @return array
+	 */
+	protected function set_data_popup( mixed $options_data, $data ): array {
 
-		$options_names = [];
+		$popup_formatter            = new Popup();
+		$data['toPopup']['options'] = $popup_formatter->format_options_with_label( $popup_formatter->get_options_names( $options_data['options'] ) );
+		$data['toPopup']['price']   = $popup_formatter->format_price_with_label( $options_data['amount'] );
+		$data['toPopup']['sum']     = $popup_formatter->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
 
-		foreach ( $custom_options as $option ) {
-
-			$label = ! isset ( $option['label'] ) ? $option['name'] : $option['label'];
-
-			$options_names[] = sprintf( '%s: %s', $label, $option['value'] );
-		}
-
-		return $options_names;
+		return $data;
 	}
 
 
 	/**
-	 * @param  mixed $options_names
+	 * @param  mixed $options_data
+	 * @param  array $data
 	 *
-	 * @return string
+	 * @return array
 	 */
-	protected function get_option_for_popup( mixed $options_names ): string {
+	protected function set_data_mail( mixed $options_data, array $data ): array {
 
-		return sprintf(
-			'<span class="awooc-attr-label">%s</span></br><span class="awooc-attr-value"><span>%s</span></span>',
-			apply_filters( 'awooc_popup_options_label', esc_html__( 'Options: ', 'awooc-product-options' ) ),
-			implode( '; </span><span>', $options_names )
-		);
+		$mail_formatter            = new Mail();
+		$data['toMail']['options'] = $mail_formatter->format_options_with_label( $mail_formatter->get_options_names( $options_data['options'] ) );
+		$data['toMail']['price']   = $mail_formatter->format_price_with_label( $options_data['amount'] );
+		$data['toMail']['sum']     = $mail_formatter->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
+
+		return $data;
 	}
 
 
-	protected function get_formatted_price_for_popup( $amount ): string {
+	/**
+	 * @param  mixed $options_data
+	 * @param  array $data
+	 *
+	 * @return array
+	 */
+	protected function set_data_analytics( mixed $options_data, array $data ): array {
 
-		return sprintf(
-			'<span class="awooc-price-label">%s</span><span class="awooc-price-value">%s</span>',
-			apply_filters( 'awooc_popup_price_label', __( 'Price: ', 'art-woocommerce-order-one-click' ) ),
-			wc_price( $amount )
-		);
-	}
+		$analytics_formatter            = new Analytics();
+		$data['toAnalytics']['options'] = $analytics_formatter->format_options_list( $analytics_formatter->get_options_names( $options_data['options'] ) );
+		$data['toAnalytics']['price']   = $options_data['amount'];
 
-
-	protected function get_formatted_sum_for_popup( $amount, $qty ): string {
-
-
-		return sprintf(
-			'<span class="awooc-sum-label">%s</span><span class="awooc-sum-value">%s</span>',
-			apply_filters( 'awooc_popup_sum_label', __( 'Amount: ', 'art-woocommerce-order-one-click' ) ),
-			wc_price( $amount * $qty )
-		);
-	}
-
-
-	protected function get_formatted_price_for_mail( $amount ): string {
-
-		return sprintf(
-			'%s%s',
-			__( 'Price: ', 'art-woocommerce-order-one-click' ),
-			wp_filter_nohtml_kses( wc_price( $amount ) )
-		);
-	}
-
-
-	protected function get_formatted_sum_for_mail( $amount, $qty ): string {
-
-
-		return sprintf(
-			'%s%s',
-			__( 'Amount: ', 'art-woocommerce-order-one-click' ),
-			wp_filter_nohtml_kses( wc_price( $amount * $qty ) )
-		);
+		return $data;
 	}
 
 
