@@ -15,12 +15,20 @@ class Main {
 
 	public function init(): void {
 
+		( new PluginsManager() )->init();
+
 		$this->setup_hooks();
 
 		//( new HandleExtraProductOptions() )->setup_hooks();
 		//( new HandleSimpleProductOptions() )->setup_hooks();
-		//( new HandleAdvancedProductFields() )->setup_hooks();
-		( new ArtWoocommerceProductOptions() )->setup_hooks();
+
+		if ( PluginsManager::is_plugin_active( 'advanced-product-fields-for-woocommerce/advanced-product-fields-for-woocommerce.php' ) ) {
+			( new AdvancedProductFields() )->setup_hooks();
+		}
+
+		if ( PluginsManager::is_plugin_active( 'art-woocommerce-product-options/art-woocommerce-product-options.php' ) ) {
+			( new ArtWoocommerceProductOptions() )->setup_hooks();
+		}
 	}
 
 
