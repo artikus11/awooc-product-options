@@ -11,5 +11,20 @@
             "name": "Andreslav Kozlov, Artem Abramovich"
         }
     ],
-    "require": {}
+    "require": {},
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.11",
+        "wp-coding-standards/wpcs": "^3.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpcompatibility/phpcompatibility-wp": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "scripts": {
+        "phpcs": "phpcs --standard=./phpcs.xml",
+        "phpcbf": "phpcbf --standard=./phpcs.xml"
+    }
 }
