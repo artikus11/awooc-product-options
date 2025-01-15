@@ -15,7 +15,7 @@ use WC_Product;
 
 class SimpleProductOptions extends Handle {
 
-	public function added_options( $options, $data, $product_id ) {
+	public function added_options( $options, $product_id ): array {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( empty( $_POST['pofw_option'] ) ) {
@@ -25,7 +25,7 @@ class SimpleProductOptions extends Handle {
 		$product = wc_get_product( $product_id );
 
 		$post_data          = map_deep( wp_unslash( (array) $_POST['pofw_option'] ), 'sanitize_text_field' );
-		$post_data_quantity = sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) );
+		$post_data_quantity = ! empty( $_POST['quantity'] ) ? sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) ) : 1;
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		$options_data = $this->prepared_selected_data( $product->get_id(), $post_data );
@@ -87,7 +87,7 @@ class SimpleProductOptions extends Handle {
 
 	public function getOptionModel(): Pektsekye_ProductOptions_Model_Option {
 
-		include_once( Pektsekye_PO()->getPluginPath() . 'Model/Option.php' );
+		include_once Pektsekye_PO()->getPluginPath() . 'Model/Option.php';
 
 		return new Pektsekye_ProductOptions_Model_Option();
 	}

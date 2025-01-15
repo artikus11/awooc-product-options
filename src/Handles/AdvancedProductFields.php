@@ -18,7 +18,7 @@ use WC_Product;
 
 class AdvancedProductFields extends Handle {
 
-	public function added_options( $options, $data, $product_id ) {
+	public function added_options( $options, $product_id ): array {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( empty( $_POST['wapf'] ) || ! isset( $_POST['wapf_field_groups'] ) ) {
@@ -29,11 +29,14 @@ class AdvancedProductFields extends Handle {
 			return $options;
 		}
 
-		$field_groups = Field_Groups::get_by_ids( explode( ',', sanitize_text_field( $_POST['wapf_field_groups'] ) ) );
-		$fields       = Enumerable::from( $field_groups )->merge( function ( $x ) { return $x->fields; } )->toArray();
+		$field_groups = Field_Groups::get_by_ids( explode( ',', sanitize_text_field( wp_unslash( $_POST['wapf_field_groups'] ) ) ) );
+		$fields       = Enumerable::from( $field_groups )->merge( function ( $x ) {
+
+			return $x->fields;
+		} )->toArray();
 
 		$post_data          = map_deep( wp_unslash( (array) $_POST['wapf'] ), 'sanitize_text_field' );
-		$post_data_quantity = sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) );
+		$post_data_quantity = ! empty( $_POST['quantity'] ) ? sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) ) : 1;
 		$product            = wc_get_product( $product_id );
 
 		$options_data = $this->get_options_data( $post_data, $fields, $product );
@@ -71,14 +74,7 @@ class AdvancedProductFields extends Handle {
 	}
 
 
-	/**
-	 * @param  mixed      $post_data
-	 * @param  array      $fields
-	 * @param  WC_Product $product
-	 *
-	 * @return array
-	 */
-	protected function get_options_data( mixed $post_data, array $fields, WC_Product $product ): array {
+	protected function get_options_data( $post_data, array $fields, WC_Product $product ): array {
 
 		$options_data = [];
 
@@ -117,7 +113,6 @@ class AdvancedProductFields extends Handle {
 		$amount        = 0;
 
 		foreach ( $options_data as $field ) {
-
 
 			if ( empty( $field['price'] ) ) {
 				continue;
@@ -181,12 +176,12 @@ class AdvancedProductFields extends Handle {
 
 
 	/**
-	 * @param        $prices
-	 * @param  mixed $options_total
+	 * @param  array $prices
+	 * @param  int   $options_total
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	protected function get_total_option_price( $prices, mixed $options_total ): mixed {
+	protected function get_total_option_price( array $prices, int $options_total ): mixed {
 
 		foreach ( $prices as $price ) {
 			$options_total += $price['value'];
@@ -194,5 +189,4 @@ class AdvancedProductFields extends Handle {
 
 		return $options_total;
 	}
-
 }

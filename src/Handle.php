@@ -4,11 +4,11 @@ namespace Art\AwoocProductOptions;
 
 use WC_Product;
 
-class Handle {
+abstract class Handle {
 
 	public function setup_hooks(): void {
 
-		add_filter( 'awooc_data_ajax_options', [ $this, 'added_options' ], 10, 3 );
+		add_filter( 'awooc_data_ajax_options', [ $this, 'added_options' ], 10, 2 );
 		add_action( 'awooc_create_order', [ $this, 'add_option_in_order' ], 100, 3 );
 
 		add_filter( 'awooc_added_hidden_fields', [ $this, 'added_hidden_fields' ], 10, 1 );
@@ -16,14 +16,11 @@ class Handle {
 	}
 
 
-	public function added_options( $options, $data, $product_id ) {
-
-		return $options;
-	}
+	abstract public function added_options( $options, $product_id ): array;
 
 
 	/**
-	 * @throws \JsonException
+	 * @throws \JsonException If the JSON decoding fails.
 	 */
 	public function add_option_in_order( $order, $contact_form, $posted_data ): void {
 
@@ -38,9 +35,14 @@ class Handle {
 
 
 	/**
-	 * @throws \JsonException
+	 * Extract options from posted data.
+	 *
+	 * @param  array $posted_data The data posted from the request.
+	 *
+	 * @return array Decoded options array.
+	 * @throws \JsonException If the JSON decoding fails.
 	 */
-	protected function extract_options( $posted_data ): array {
+	protected function extract_options( array $posted_data ): array {
 
 		if ( empty( $posted_data['awooc_options'] ) ) {
 			return [];
@@ -79,28 +81,16 @@ class Handle {
 	}
 
 
-	protected function get_total_options( array $options_data, WC_Product $product ): float {
+	/**
+	 * @param  array       $options_data
+	 * @param  \WC_Product $product
+	 *
+	 * @return float
+	 *
+	 * @todo может быть использовать трейты или интерфес?
+	 */
+	protected function get_total_options( array $options_data, WC_Product $product ): float { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		return 0;
 	}
-
-
-	/**
-	 * @param        $custom_options
-	 * @param  array $options_names
-	 * @param        $class_name
-	 *
-	 * @return array
-	 */
-	protected function get_options_names( $custom_options, array $options_names, $class_name ): array {
-
-		$label = $class_name === __NAMESPACE__ . '\HandleSimpleProductOptions' ? 'name' : 'label';
-
-		foreach ( $custom_options as $option ) {
-			$options_names[] = sprintf( '%s: %s', $option[ $label ], $option['value'] );
-		}
-
-		return $options_names;
-	}
-
 }

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Обработка для плагина Art WooCommerce Product Options
+ *
+ * @see     https://wpruse.ru/my-plugins/awooc-product-options/
+ * @package awooc-product-options/src/Handlers
+ * @version 1.1.0
+ */
 
 namespace Art\AwoocProductOptions\Handles;
 
@@ -20,7 +27,7 @@ class ArtWoocommerceProductOptions extends Handle {
 	}
 
 
-	public function added_options( $options, $data, $product_id ) {
+	public function added_options( $options, $product_id ): array {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( empty( $_POST['awpo_option'] ) ) {
@@ -30,7 +37,7 @@ class ArtWoocommerceProductOptions extends Handle {
 		$product = wc_get_product( $product_id );
 
 		$post_data          = map_deep( wp_unslash( (array) $_POST['awpo_option'] ), 'sanitize_text_field' );
-		$post_data_quantity = sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) );
+		$post_data_quantity = ! empty( $_POST['quantity'] ) ? sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) ) : 1;
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		$options_data = $this->awpo_main->get_cart()->prepared_selected_data( $product->get_id(), $post_data );
@@ -117,5 +124,4 @@ class ArtWoocommerceProductOptions extends Handle {
 
 		return $amount;
 	}
-
 }

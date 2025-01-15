@@ -29,6 +29,7 @@ class Mail extends Formatter {
 	public function format_options_with_label( array $options_names ): string {
 
 		return sprintf(
+		/* translators: %s: options names */
 			__( 'Options: %s', 'awooc-product-options' ),
 			$this->format_options_list( $options_names )
 		);

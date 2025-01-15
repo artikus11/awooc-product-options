@@ -14,7 +14,7 @@ use THWEPOF_Utils;
 
 class ExtraProductOptions extends Handle {
 
-	public function added_options( $options, $data, $product_id ) {
+	public function added_options( $options, $product_id ): array {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( empty( $_POST['thwepof_product_fields'] ) ) {
@@ -74,11 +74,15 @@ class ExtraProductOptions extends Handle {
 
 		$allow_get_method = THWEPOF_Utils::get_settings( 'allow_get_method' );
 
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( $allow_get_method ) {
-			$product_fields = isset( $_REQUEST['thwepof_product_fields'] ) ? wc_clean( $_REQUEST['thwepof_product_fields'] ) : '';
+			$product_fields = isset( $_REQUEST['thwepof_product_fields'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['thwepof_product_fields'] ) ) : '';
 		} else {
-			$product_fields = isset( $_POST['thwepof_product_fields'] ) ? wc_clean( $_POST['thwepof_product_fields'] ) : '';
+			$product_fields = isset( $_POST['thwepof_product_fields'] ) ? sanitize_text_field( wp_unslash( $_POST['thwepof_product_fields'] ) ) : '';
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		$prod_fields = $product_fields ? explode( ',', $product_fields ) : [];
 
@@ -96,6 +100,8 @@ class ExtraProductOptions extends Handle {
 
 	protected function get_posted_value( $name, $type = false ) {
 
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		$is_posted = isset( $_POST[ $name ] ) || isset( $_REQUEST[ $name ] );
 		$value     = '';
 
@@ -103,10 +109,11 @@ class ExtraProductOptions extends Handle {
 			return $value;
 		}
 
-		$value = isset( $_POST[ $name ] ) && $_POST[ $name ] ? $_POST[ $name ] : false;
-		$value = empty( $value ) && isset( $_REQUEST[ $name ] ) ? $_REQUEST[ $name ] : $value;
-
-		if ( $type === 'textarea' ) {
+		$value = ! empty( $_POST[ $name ] ) ? sanitize_text_field( wp_unslash( $_POST[ $name ] ) ) : false;
+		$value = empty( $value ) && isset( $_REQUEST[ $name ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $name ] ) ) : $value;
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		if ( 'textarea' === $type ) {
 			$value = sanitize_textarea_field( wp_unslash( $value ) );
 		} else {
 			$value = wc_clean( wp_unslash( ( $value ) ) );

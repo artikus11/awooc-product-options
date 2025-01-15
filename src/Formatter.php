@@ -50,7 +50,7 @@ class Formatter {
 
 		foreach ( $custom_options as $option ) {
 
-			$label = ! isset ( $option['label'] ) ? $option['name'] : $option['label'];
+			$label = ! isset( $option['label'] ) ? $option['name'] : $option['label'];
 
 			$options_names[] = sprintf( '%s: %s', $label, $option['value'] );
 		}

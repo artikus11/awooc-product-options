@@ -24,9 +24,6 @@ class Main {
 
 		$this->setup_hooks();
 
-		//( new HandleExtraProductOptions() )->setup_hooks();
-		//( new HandleSimpleProductOptions() )->setup_hooks();
-
 		$this->init_classes();
 	}
 
@@ -68,7 +65,7 @@ class Main {
 		$product_parent_id = $product->get_parent_id();
 		$product_id        = $product_parent_id ? : $product->get_id();
 
-		$options_data = apply_filters( 'awooc_data_ajax_options', [], $data, $product_id );
+		$options_data = apply_filters( 'awooc_data_ajax_options', [], $product_id );
 
 		if ( empty( $options_data['options'] ) ) {
 			return $data;
@@ -112,13 +109,7 @@ class Main {
 	}
 
 
-	/**
-	 * @param  mixed $options_data
-	 * @param        $data
-	 *
-	 * @return array
-	 */
-	protected function set_data_popup( mixed $options_data, $data ): array {
+	protected function set_data_popup( $options_data, $data ): array {
 
 		$popup_formatter            = new Popup();
 		$data['toPopup']['options'] = $popup_formatter->format_options_with_label( $popup_formatter->get_options_names( $options_data['options'] ) );
@@ -126,19 +117,13 @@ class Main {
 		if ( ! empty( $options_data['amount'] ) ) {
 			$data['toPopup']['price'] = $popup_formatter->format_price_with_label( $options_data['amount'] );
 			$data['toPopup']['sum']   = $popup_formatter->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
-		};
+		}
 
 		return $data;
 	}
 
 
-	/**
-	 * @param  mixed $options_data
-	 * @param  array $data
-	 *
-	 * @return array
-	 */
-	protected function set_data_mail( mixed $options_data, array $data ): array {
+	protected function set_data_mail( $options_data, array $data ): array {
 
 		$mail_formatter            = new Mail();
 		$data['toMail']['options'] = $mail_formatter->format_options_with_label( $mail_formatter->get_options_names( $options_data['options'] ) );
@@ -152,13 +137,7 @@ class Main {
 	}
 
 
-	/**
-	 * @param  mixed $options_data
-	 * @param  array $data
-	 *
-	 * @return array
-	 */
-	protected function set_data_analytics( mixed $options_data, array $data ): array {
+	protected function set_data_analytics( $options_data, array $data ): array {
 
 		$analytics_formatter            = new Analytics();
 		$data['toAnalytics']['options'] = $analytics_formatter->format_options_list( $analytics_formatter->get_options_names( $options_data['options'] ) );
@@ -169,5 +148,4 @@ class Main {
 
 		return $data;
 	}
-
 }

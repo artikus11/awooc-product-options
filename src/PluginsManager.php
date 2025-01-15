@@ -24,7 +24,7 @@ class PluginsManager {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		if ( ! in_array( $plugin, self::SUPPORT_PLUGINS ) ) {
+		if ( ! in_array( $plugin, self::SUPPORT_PLUGINS, true ) ) {
 			return;
 		}
 
@@ -37,11 +37,12 @@ class PluginsManager {
 
 
 	/**
-	 * @param $plugin
+	 * @param  string $plugin
 	 *
 	 * @return bool
 	 */
-	public static function is_plugin_active( $plugin ): bool {
+	public static function is_plugin_active( string $plugin ): bool {
+
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
