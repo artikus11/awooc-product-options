@@ -31,7 +31,7 @@ class Mail extends Formatter {
 		return sprintf(
 		/* translators: %s: options names */
 			__( 'Options: %s', 'awooc-product-options' ),
-			$this->format_options_list( $options_names )
+			wp_strip_all_tags( $this->format_options_list( $options_names ) )
 		);
 	}
 }
