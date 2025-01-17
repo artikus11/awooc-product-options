@@ -35,18 +35,45 @@ class AdvancedProductFields extends Handle {
 			return $x->fields;
 		} )->toArray();
 
-		$post_data          = map_deep( wp_unslash( (array) $_POST['wapf'] ), 'sanitize_text_field' );
-		$post_data_quantity = ! empty( $_POST['quantity'] ) ? sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) ) : 1;
-		$product            = wc_get_product( $product_id );
+		$post_data = map_deep( wp_unslash( (array) $_POST['wapf'] ), 'sanitize_text_field' );
 
-		$options_data = $this->get_options_data( $post_data, $fields, $product );
+		$product = wc_get_product( $product_id );
+
+		$options_data = $this->prepare_options_data( $post_data, $fields, $product );
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		$options['options']  = $options_data;
 		$options['amount']   = $this->get_total_options( $options_data, $product );
-		$options['quantity'] = $post_data_quantity;
+		$options['quantity'] = $this->get_quantity();
 
 		return $options;
+	}
+
+
+	protected function prepare_options_data( $post_data, array $fields, WC_Product $product ): array {
+
+		$options_data = [];
+
+		foreach ( $post_data as $raw_field_id => $field_value ) {
+			if ( '' === $field_value ) {
+				continue;
+			}
+
+			$field_id = str_replace( 'field_', '', $raw_field_id );
+
+			$field = Enumerable::from( $fields )->firstOrDefault( function ( $x ) use ( $field_id ) {
+
+				return $x->id === $field_id;
+			} );
+
+			if ( ! $field ) {
+				continue;
+			}
+
+			$options_data[] = $this->prepared_selected_data( $field, $product );
+		}
+
+		return $options_data;
 	}
 
 
@@ -74,33 +101,6 @@ class AdvancedProductFields extends Handle {
 	}
 
 
-	protected function get_options_data( $post_data, array $fields, WC_Product $product ): array {
-
-		$options_data = [];
-
-		foreach ( $post_data as $raw_field_id => $field_value ) {
-			if ( '' === $field_value ) {
-				continue;
-			}
-
-			$field_id = str_replace( 'field_', '', $raw_field_id );
-
-			$field = Enumerable::from( $fields )->firstOrDefault( function ( $x ) use ( $field_id ) {
-
-				return $x->id === $field_id;
-			} );
-
-			if ( ! $field ) {
-				continue;
-			}
-
-			$options_data[] = $this->prepared_selected_data( $field, $product );
-		}
-
-		return $options_data;
-	}
-
-
 	/**
 	 * @param  array      $options_data
 	 * @param  WC_Product $product
@@ -109,23 +109,15 @@ class AdvancedProductFields extends Handle {
 	 */
 	protected function get_total_options( array $options_data, WC_Product $product ): float {
 
-		$options_total = 0;
-		$amount        = 0;
+		$total_options = 0.0;
 
 		foreach ( $options_data as $field ) {
-
-			if ( empty( $field['price'] ) ) {
-				continue;
+			if ( ! empty( $field['value'] ) && ! empty( $field['price'] ) ) {
+				$total_options += (float) $this->get_total_option_price( $field['price'], $total_options );
 			}
-
-			$current_price = $product->get_price();
-
-			$options_total = $this->get_total_option_price( $field['price'], $options_total );
-
-			$amount = (float) $options_total + (float) $current_price;
 		}
 
-		return $amount;
+		return (float) $product->get_price() + $total_options;
 	}
 
 
@@ -159,9 +151,9 @@ class AdvancedProductFields extends Handle {
 				$item->set_total( $product_price_with_options );
 
 				$item->save();
-
-				$order_total += $item->get_total() + $item->get_total_tax();
 			}
+
+			$order_total += $item->get_total() + $item->get_total_tax();
 		}
 
 		$discount_total = $order->get_discount_total();
