@@ -6,6 +6,7 @@ use Art\AwoocProductOptions\Handles\AdvancedProductFields;
 use Art\AwoocProductOptions\Handles\ArtWoocommerceProductOptions;
 use Art\AwoocProductOptions\Handles\ExtraProductOptions;
 use Art\AwoocProductOptions\Handles\SimpleProductOptions;
+use Art\AwoocProductOptions\Handles\YithWoocommerceProductAddOns;
 
 class Main {
 
@@ -30,6 +31,10 @@ class Main {
 	protected function init_classes(): void {
 
 		( new AwoocAjaxHandler() )->init_hooks();
+
+		if ( PluginsManager::is_plugin_active( 'yith-woocommerce-product-add-ons/init.php' ) ) {
+			( new YithWoocommerceProductAddOns() )->setup_hooks();
+		}
 
 		if ( PluginsManager::is_plugin_active( 'product-options-for-woocommerce/product-options-for-woocommerce.php' ) ) {
 			( new SimpleProductOptions() )->setup_hooks();

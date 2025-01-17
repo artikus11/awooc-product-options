@@ -9,6 +9,7 @@ class PluginsManager {
 		'woo-extra-product-options/woo-extra-product-options.php',
 		'product-options-for-woocommerce/product-options-for-woocommerce.php',
 		'art-woocommerce-product-options/art-woocommerce-product-options.php',
+		'yith-woocommerce-product-add-ons/init.php',
 	];
 
 
