@@ -118,6 +118,6 @@ abstract class Handle {
 			}
 		}
 
-		return ( (float) $product->get_price() + $total_options ) * $this->get_quantity();
+		return (float) $product->get_price() + $total_options;
 	}
 }
