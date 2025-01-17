@@ -34,7 +34,7 @@ class YithWoocommerceProductAddOns extends Handle {
 		$options_data = $this->prepare_options_data( $post_data, $product );
 
 		$options['options']  = $options_data;
-		$options['amount']   = $this->get_total_options( $options_data, $product ) / $this->get_quantity();
+		$options['amount']   = $this->get_total_options( $options_data, $product );
 		$options['quantity'] = $this->get_quantity();
 
 		return $options;
