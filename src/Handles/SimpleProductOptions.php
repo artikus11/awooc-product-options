@@ -11,7 +11,6 @@ namespace Art\AwoocProductOptions\Handles;
 
 use Art\AwoocProductOptions\Handle;
 use Pektsekye_ProductOptions_Model_Option;
-use WC_Product;
 
 class SimpleProductOptions extends Handle {
 
@@ -22,17 +21,16 @@ class SimpleProductOptions extends Handle {
 			return $options;
 		}
 
+		$post_data = map_deep( wp_unslash( (array) $_POST['pofw_option'] ), 'sanitize_text_field' );
+
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 		$product = wc_get_product( $product_id );
 
-		$post_data          = map_deep( wp_unslash( (array) $_POST['pofw_option'] ), 'sanitize_text_field' );
-		$post_data_quantity = ! empty( $_POST['quantity'] ) ? sanitize_text_field( wp_unslash( (int) $_POST['quantity'] ) ) : 1;
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
-
-		$options_data = $this->prepared_selected_data( $product->get_id(), $post_data );
+		$options_data = $this->prepare_options_data( $product->get_id(), $post_data );
 
 		$options['options']  = $options_data;
 		$options['amount']   = $this->get_total_options( $options_data, $product );
-		$options['quantity'] = $post_data_quantity;
+		$options['quantity'] = $this->get_quantity();
 
 		return $options;
 	}
@@ -93,7 +91,7 @@ class SimpleProductOptions extends Handle {
 	}
 
 
-	public function prepared_selected_data( $product_id, $selected_values ): array { // phpcs:ignore Generic.Metrics.NestingLevel.MaxExceeded
+	public function prepare_options_data( $product_id, $selected_values ): array {
 
 		$options = $this->getOptionModel()->getProductOptions( $product_id );
 
@@ -104,51 +102,32 @@ class SimpleProductOptions extends Handle {
 		$formatted_values = [];
 
 		foreach ( $options as $option_id => $option ) {
-			if ( empty( $selected_values[ $option_id ] ) ) {
+			$selected_value = $selected_values[ $option_id ] ?? null;
+
+			if ( ! $selected_value ) {
 				continue;
 			}
-
-			$selected_value = $selected_values[ $option_id ];
 
 			$value = '';
 			$price = 0;
 
-			switch ( $option['type'] ) {
-				case 'radio':
-				case 'drop_down':
-					if ( is_array( $selected_value ) ) {
-						break;
-					}
-
-					$value_id = (int) $selected_value;
-
-					if ( ! isset( $option['values'][ $value_id ] ) ) {
-						break;
-					}
-
-					$value = $option['values'][ $value_id ]['title'];
+			if ( ! is_array( $selected_value ) && in_array( $option['type'], [ 'radio', 'drop_down' ], true ) ) {
+				$value_id = (int) $selected_value;
+				if ( isset( $option['values'][ $value_id ] ) ) {
+					$value = $this->format_price( $option['values'][ $value_id ]['title'], (float) $option['values'][ $value_id ]['price'] );
 					$price = $option['values'][ $value_id ]['price'];
-
-					break;
-				case 'checkbox':
-				case 'multiple':
-					foreach ( (array) $selected_value as $value_id ) {
-						if ( ! isset( $option['values'][ $value_id ] ) ) {
-							continue;
-						}
-
-						$value .= ( '' !== $value ? ', ' : '' ) . $option['values'][ $value_id ]['title'];
-						$price += (float) $option['values'][ $value_id ]['price'];
-					}
-					break;
-				case 'field':
-				case 'area':
-					if ( is_array( $selected_value ) ) {
-						break;
+				}
+			} elseif ( in_array( $option['type'], [ 'checkbox', 'multiple' ], true ) ) {
+				foreach ( (array) $selected_value as $value_id ) {
+					if ( ! isset( $option['values'][ $value_id ] ) ) {
+						continue;
 					}
 
-					$value = $selected_value;
-					break;
+					$price += (float) $option['values'][ $value_id ]['price'];
+					$value .= ( $value ? ', ' : '' ) . $this->format_price( $option['values'][ $value_id ]['title'], (float) $option['values'][ $value_id ]['price'] );
+				}
+			} elseif ( in_array( $option['type'], [ 'field', 'area' ], true ) && ! is_array( $selected_value ) ) {
+				$value = $selected_value;
 			}
 
 			if ( $value ) {
@@ -164,38 +143,9 @@ class SimpleProductOptions extends Handle {
 	}
 
 
-	/**
-	 * @param  array      $options_data
-	 * @param  WC_Product $product
-	 *
-	 * @return float
-	 */
-	protected function get_total_options( array $options_data, WC_Product $product ): float {
-
-		$options_total = 0;
-		$amount        = 0;
-
-		foreach ( $options_data as $field ) {
-			if ( empty( $field['value'] ) ) {
-				continue;
-			}
-
-			$current_price = $product->get_price();
-
-			if ( ! empty( $field['price'] ) ) {
-				$options_total += $field['price'];
-			}
-
-			$amount = (float) $options_total + (float) $current_price;
-		}
-
-		return $amount;
-	}
-
-
 	protected function format_price( $text, $price ): string {
 
-		$price = empty( $price ) ? '' : sprintf( ' +%s', wc_price( $price ) );
+		$price = empty( $price ) ? '' : sprintf( ' (+%s)', wc_price( $price ) );
 
 		return sprintf( '%s %s', $text, $price );
 	}
