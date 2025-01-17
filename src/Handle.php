@@ -6,6 +6,12 @@ use WC_Product;
 
 abstract class Handle {
 
+	/**
+	 * @var int
+	 */
+	protected int $quantity;
+
+
 	public function setup_hooks(): void {
 
 		add_filter( 'awooc_data_ajax_options', [ $this, 'added_options' ], 10, 2 );
@@ -82,6 +88,19 @@ abstract class Handle {
 
 
 	/**
+	 * @return int
+	 */
+	public function get_quantity(): int {
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		$this->quantity = ! empty( $_POST['quantity'] ) ? max( 1, (int) sanitize_text_field( wp_unslash( $_POST['quantity'] ) ) ) : 1;
+
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		return $this->quantity;
+	}
+
+
+	/**
 	 * @param  array       $options_data
 	 * @param  \WC_Product $product
 	 *
@@ -89,8 +108,16 @@ abstract class Handle {
 	 *
 	 * @todo может быть использовать трейты или интерфес?
 	 */
-	protected function get_total_options( array $options_data, WC_Product $product ): float { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	protected function get_total_options( array $options_data, WC_Product $product ): float {
 
-		return 0;
+		$total_options = 0.0;
+
+		foreach ( $options_data as $field ) {
+			if ( ! empty( $field['value'] ) && ! empty( $field['price'] ) ) {
+				$total_options += (float) $field['price'];
+			}
+		}
+
+		return ( (float) $product->get_price() + $total_options ) * $this->get_quantity();
 	}
 }
