@@ -2,7 +2,25 @@
 
 namespace Art\AwoocProductOptions;
 
-class Formatter {
+abstract class Formatter {
+
+	abstract public function format( array $options_data, array $data ): array;
+
+
+	public function format_options_names( $custom_options ): array {
+
+		$options_names = [];
+
+		foreach ( $custom_options as $option ) {
+
+			$label = ! isset( $option['label'] ) ? $option['name'] : $option['label'];
+
+			$options_names[] = sprintf( '%s: %s', $label, $option['value'] );
+		}
+
+		return $options_names;
+	}
+
 
 	/**
 	 * Форматирование цены.
@@ -41,20 +59,5 @@ class Formatter {
 	public function format_options_list( array $options_names ): string {
 
 		return implode( '; ', $options_names );
-	}
-
-
-	public function get_options_names( $custom_options ): array {
-
-		$options_names = [];
-
-		foreach ( $custom_options as $option ) {
-
-			$label = ! isset( $option['label'] ) ? $option['name'] : $option['label'];
-
-			$options_names[] = sprintf( '%s: %s', $label, $option['value'] );
-		}
-
-		return $options_names;
 	}
 }

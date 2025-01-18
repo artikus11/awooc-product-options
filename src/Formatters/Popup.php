@@ -6,6 +6,21 @@ use Art\AwoocProductOptions\Formatter;
 
 class Popup extends Formatter {
 
+	public function format( array $options_data, array $data ): array {
+
+		if ( ! empty( $options_data['options'] ) ) {
+			$data['toPopup']['options'] = $this->format_options_with_label( $this->format_options_names( $options_data['options'] ) );
+		}
+
+		if ( ! empty( $options_data['amount'] ) ) {
+			$data['toPopup']['price'] = $this->format_price_with_label( $options_data['amount'] );
+			$data['toPopup']['sum']   = $this->format_sum_with_label( $options_data['amount'], $options_data['quantity'] );
+		}
+
+		return $data;
+	}
+
+
 	public function format_price_with_label( float $amount ): string {
 
 		return sprintf(
