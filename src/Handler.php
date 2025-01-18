@@ -4,7 +4,7 @@ namespace Art\AwoocProductOptions;
 
 use WC_Product;
 
-abstract class Handle {
+abstract class Handler {
 
 	/**
 	 * @var int

@@ -7,13 +7,13 @@
  * @version 1.1.0
  */
 
-namespace Art\AwoocProductOptions\Handles;
+namespace Art\AwoocProductOptions\Handlers;
 
-use Art\AwoocProductOptions\Handle;
+use Art\AwoocProductOptions\Handler;
 use WC_Product;
 use YITH_WAPO;
 
-class YithWoocommerceProductAddOns extends Handle {
+class YithWoocommerceProductAddOns extends Handler {
 
 	public function added_options( $options, $product_id ): array {
 

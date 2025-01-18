@@ -7,16 +7,16 @@
  * @version 1.1.0
  */
 
-namespace Art\AwoocProductOptions\Handles;
+namespace Art\AwoocProductOptions\Handlers;
 
-use Art\AwoocProductOptions\Handle;
+use Art\AwoocProductOptions\Handler;
 use SW_WAPF\Includes\Classes\Enumerable;
 use SW_WAPF\Includes\Classes\Field_Groups;
 use SW_WAPF\Includes\Classes\Fields;
 use SW_WAPF\Includes\Models\Field;
 use WC_Product;
 
-class AdvancedProductFields extends Handle {
+class AdvancedProductFields extends Handler {
 
 	public function added_options( $options, $product_id ): array {
 

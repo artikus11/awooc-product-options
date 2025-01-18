@@ -7,13 +7,13 @@
  * @version 1.1.0
  */
 
-namespace Art\AwoocProductOptions\Handles;
+namespace Art\AwoocProductOptions\Handlers;
 
-use Art\AwoocProductOptions\Handle;
+use Art\AwoocProductOptions\Handler;
 use Art\WoocommerceProductOptions\Main;
 use WC_Product;
 
-class ArtWoocommerceProductOptions extends Handle {
+class ArtWoocommerceProductOptions extends Handler {
 
 	/**
 	 * @var \Art\WoocommerceProductOptions\Main|null

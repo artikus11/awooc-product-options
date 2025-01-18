@@ -2,11 +2,11 @@
 
 namespace Art\AwoocProductOptions;
 
-use Art\AwoocProductOptions\Handles\AdvancedProductFields;
-use Art\AwoocProductOptions\Handles\ArtWoocommerceProductOptions;
-use Art\AwoocProductOptions\Handles\ExtraProductOptions;
-use Art\AwoocProductOptions\Handles\SimpleProductOptions;
-use Art\AwoocProductOptions\Handles\YithWoocommerceProductAddOns;
+use Art\AwoocProductOptions\Handlers\AdvancedProductFields;
+use Art\AwoocProductOptions\Handlers\ArtWoocommerceProductOptions;
+use Art\AwoocProductOptions\Handlers\ExtraProductOptions;
+use Art\AwoocProductOptions\Handlers\SimpleProductOptions;
+use Art\AwoocProductOptions\Handlers\YithWoocommerceProductAddOns;
 
 class Main {
 
@@ -30,7 +30,7 @@ class Main {
 	 */
 	protected function init_classes(): void {
 
-		( new AwoocAjaxHandler() )->init_hooks();
+		( new HookHandler() )->init_hooks();
 
 		if ( PluginsManager::is_plugin_active( 'yith-woocommerce-product-add-ons/init.php' ) ) {
 			( new YithWoocommerceProductAddOns() )->setup_hooks();

@@ -19,7 +19,7 @@
 
 # Как добавлять поддежку
 1. В файле `src/PluginsManager.php` в константу `SUPPORT_PLUGINS` добавить путь к основному файлу плагина в виде `plugin-directory/plugin-file.php`
-2. В папке `src/Handles` создать новый класс, например `NewPluginOptionsProduct`
+2. В папке `src/Handlers` создать новый класс, например `NewPluginOptionsProduct`
 3. В методе `init_classes` основного класса `Main` через проверку подключить объект класса
 4. Во вновь созданном классе написать нужнй функционал
 
@@ -27,11 +27,12 @@
 
 ## [Unreleased]
 
-## [1.1.0] - 2025-01-15
+## [1.1.0] - 2025-01-18
 
 ### Added
 
 - Добавлено: поддержка плагина Art WooCommerce Product Options
+- Добавлено: поддержка плагина YITH WooCommerce Product Add-ons & Extra Options
 
 ### Changed
 
@@ -41,7 +42,3 @@
 - Изменено: рефакторинг обработки для плагина Extra product options For WooCommerce
 - Изменено: рефакторинг обработки для плагина Advanced Product Fields for WooCommerce
 - Изменено: приведение к WPCS
-
-### Fixed
-
-- Исправлено:

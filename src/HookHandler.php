@@ -6,7 +6,7 @@ use Art\AwoocProductOptions\Formatters\Analytics;
 use Art\AwoocProductOptions\Formatters\Mail;
 use Art\AwoocProductOptions\Formatters\Popup;
 
-class AwoocAjaxHandler {
+class HookHandler {
 
 	public function init_hooks(): void {
 
