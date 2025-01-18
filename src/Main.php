@@ -22,6 +22,7 @@ class Main {
 		( new Settings() )->init_hooks();
 
 		$this->init_classes();
+		$this->init_hooks();
 	}
 
 
@@ -51,6 +52,22 @@ class Main {
 		if ( PluginsManager::is_plugin_active( 'art-woocommerce-product-options/art-woocommerce-product-options.php' ) ) {
 			( new ArtWoocommerceProductOptions() )->setup_hooks();
 		}
+	}
+
+
+	public function init_hooks(): void {
+
+		add_action( 'init', [ $this, 'load_textdomain' ] );
+	}
+
+
+	public function load_textdomain(): void {
+
+		load_plugin_textdomain(
+			'awooc-product-options',
+			false,
+			dirname( AWOOC_PO_PLUGIN_FILE ) . '/languages/'
+		);
 	}
 
 

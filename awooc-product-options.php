@@ -31,7 +31,7 @@ $plugin_data = get_file_data(
 );
 
 const AWOOC_PO_PLUGIN_DIR = __DIR__;
-
+define( 'AWOOC_PO_PLUGIN_FILE', plugin_basename( __FILE__ ) );
 define( 'AWOOC_PO_PLUGIN_VER', $plugin_data['ver'] );
 define( 'AWOOC_PO_PLUGIN_NAME', $plugin_data['name'] );
 
