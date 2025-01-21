@@ -58,6 +58,17 @@ class Main {
 	public function init_hooks(): void {
 
 		add_action( 'init', [ $this, 'load_textdomain' ] );
+
+		add_action( 'before_woocommerce_init', static function () {
+
+			if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+					'custom_order_tables',
+					AWOOC_PO_PLUGIN_FILE,
+					true
+				);
+			}
+		} );
 	}
 
 
