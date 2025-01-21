@@ -66,7 +66,7 @@ abstract class Handler {
 		$inline_script = "
     jQuery( document ).ready( function( $ ) {
         $( document.body ).on( 'awooc_popup_ajax_trigger', function( event, response ) {
-            if ( response.data.toOrder !== undefined ) {
+            if ( event.detail.data.toOrder !== undefined ) {
                 $( 'input[name=\"awooc_options\"]' ).val( JSON.stringify( response.data.toOrder.options ) );
             } else {
                 console.log( 'Объект toOrder не существует' );
