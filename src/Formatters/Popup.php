@@ -46,7 +46,7 @@ class Popup extends Formatter {
 		return sprintf(
 			'<span class="awooc-option-label">%s</span></br><span class="awooc-option-value"><span>%s</span></span>',
 			apply_filters( 'awooc_popup_options_label', esc_html__( 'Options: ', 'awooc-product-options' ) ),
-			implode( '; </span><span>', $options_names )
+			wp_strip_all_tags( implode( '; </span><span>', $options_names ) )
 		);
 	}
 }
