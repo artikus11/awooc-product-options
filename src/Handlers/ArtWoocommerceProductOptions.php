@@ -66,7 +66,7 @@ class ArtWoocommerceProductOptions extends Handler {
 					continue;
 				}
 
-				$item->update_meta_data( $option['label'], $this->awpo_main->get_cart()->format_price( $option['value'], $option['price'] ) );
+				$item->update_meta_data( $option['label'], $option['value'] );
 
 				$current_price = $product->get_price();
 
